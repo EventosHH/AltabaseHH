@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin AltaletraHH</title>
+
+<style>
+body{
+  background:#111;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  padding:20px;
+}
+h1,h2{color:#4da6ff;margin-bottom:16px;}
+table{width:100%;border-collapse:collapse;margin-bottom:24px;}
+th,td{border:1px solid #4da6ff;padding:8px;text-align:center;}
+th{background:#0d3b66;}
+tr.pendiente{background:#222;}
+tr.pagado{background:#06470f;}
+button{
+  padding:6px 12px;
+  margin:2px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+}
+button.mark{background:#4CAF50;color:#000;}
+button.cancel{background:#FF8C00;color:#000;}
+button.delete{background:#b30000;color:#fff;}
+button.export{background:#0d3b66;color:#fff;margin-bottom:12px;}
+button.refresh{background:#4CAF50;color:#000;margin-bottom:12px;}
+#loginForm{max-width:300px;margin:auto;text-align:center;}
+#loginForm input{
+  width:100%;
+  padding:10px;
+  margin-bottom:12px;
+  background:#111;
+  color:#fff;
+  border:1px solid #4da6ff;
+  border-radius:6px;
+}
+#adminContent{display:none;}
+/* ================= RESPONSIVE ADMIN ================= */
+
+@media (max-width: 768px){
+
+  body{
+    padding: 10px;
+  }
+
+  h1, h2{
+    text-align: center;
+  }
+
+  /* Scroll horizontal seguro para tablas */
+  table{
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  th, td{
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  /* Botones más grandes para dedo */
+  button{
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  /* Login más cómodo */
+  #loginForm{
+    width: 100%;
+    padding: 10px;
+  }
+
+  #loginForm input{
+    font-size: 16px;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="loginForm">
+  <h1>Admin Login</h1>
+  <input type="password" id="passwordInput" placeholder="Contraseña">
+  <button id="loginBtn">Ingresar</button>
+  <div id="loginMsg"></div>
+</div>
+
+<!-- ADMIN -->
+<div id="adminContent">
+<h1>Admin AltaletraHH</h1>
+
+<button class="refresh" id="btnRefresh">Actualizar</button>
+<button class="export" id="exportCSV">Exportar CSV</button>
+
+<h2>Pendientes</h2>
+<table>
+<thead>
+<tr>
+  <th>Nombre</th>
+  <th>Email / Código</th>
+  <th>Entrada</th>
+  <th>Cantidad</th>
+  <th>Acciones</th>
+</tr>
+</thead>
+<tbody id="pendientesTable"></tbody>
+</table>
+
+<h2>Pagados</h2>
+<table>
+<thead>
+<tr>
+  <th>Nombre</th>
+  <th>Email / Código</th>
+  <th>Entrada</th>
+  <th>Cantidad</th>
+  <th>Acciones</th>
+</tr>
+</thead>
+<tbody id="pagadosTable"></tbody>
+</table>
+
+<h2>Uso de códigos Esquinas</h2>
+<table>
+<thead>
+<tr>
+  <th>Código</th>
+  <th>Usos</th>
+  <th>Restante</th>
+</tr>
+</thead>
+<tbody id="codigosTable"></tbody>
+</table>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4WRbONIIIiM4_dBU6S2LDbfhy62TpTB-Pml82hO6Q8RrGM-ELH1-S3roOEH4Ny-Lj/exec";
+const PASSWORD = "1987275400";
+
+const CODIGOS_ESQUINAS = [
+  "CLANDEWU90HH",
+  "CABRASENCARRERA90HH",
+  "MATUZA90HH",
+  "METRYK90HH",
+  "OWEN90HH",
+  "CARPINTERO90HH",
+  "DAVID90HH",
+  "COVA90HH"
+];
+
+// ================= LOGIN =================
+const loginBtn = document.getElementById("loginBtn");
+loginBtn.onclick = () => {
+  if (document.getElementById("passwordInput").value === PASSWORD) {
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("adminContent").style.display = "block";
+    cargarDatos();
+  } else {
+    document.getElementById("loginMsg").textContent = "Contraseña incorrecta";
+  }
+};
+
+// ================= CARGA DATOS =================
+async function cargarDatos() {
+  try {
+    const res = await fetch(SCRIPT_URL);
+    const data = await res.json();
+    renderTablas(data);
+  } catch (err) {
+    console.error("Error cargando datos:", err);
+  }
+}
+
+// ================= RENDER TABLAS =================
+function renderTablas(data) {
+  const pendientes = document.getElementById("pendientesTable");
+  const pagados = document.getElementById("pagadosTable");
+  const codigos = document.getElementById("codigosTable");
+
+  pendientes.innerHTML = "";
+  pagados.innerHTML = "";
+  codigos.innerHTML = "";
+
+data.forEach(v => {
+
+  const tr = document.createElement("tr");
+  const estado = (v.estado || "Pendiente").trim();
+
+  tr.className = estado === "Pagado" ? "pagado" : "pendiente";
+
+  tr.innerHTML = `
+    <td>${v.nombre}</td>
+    <td>${v.email}</td>
+    <td>${v.entrada}</td>
+    <td>${v.cantidad}</td>
+    <td>
+      ${estado === "Pendiente"
+        ? `<button class="mark" onclick="updateEstado(${v.row},'Pagado')">Pagado</button>`
+        : `<button class="cancel" onclick="updateEstado(${v.row},'Pendiente')">Cancelar</button>`
+      }
+      <button class="delete" onclick="eliminar(${v.row})">Eliminar</button>
+    </td>
+  `;
+
+  (estado === "Pagado" ? pagados : pendientes).appendChild(tr);
+});
+
+  // TABLA CÓDIGOS ESQUINAS
+  CODIGOS_ESQUINAS.forEach(c => {
+    const usados = data.filter(v => v.email === c).length;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${c}</td><td>${usados}</td><td>${7 - usados}</td>`;
+    codigos.appendChild(tr);
+  });
+}
+
+// ================= ACCIONES =================
+async function updateEstado(id, estado) {
+  const body = new URLSearchParams({
+    action: "estado",
+    id,
+    estado
+  });
+
+  await fetch(SCRIPT_URL, {
+    method: "POST",
+    body
+  });
+
+  cargarDatos();
+}
+
+async function eliminar(id) {
+  if (!confirm("¿Eliminar venta?")) return;
+
+  const body = new URLSearchParams({
+    action: "delete",
+    id
+  });
+
+  await fetch(SCRIPT_URL, {
+    method: "POST",
+    body
+  });
+
+  cargarDatos();
+}
+
+
+// ================= EXPORTAR CSV =================
+document.getElementById("exportCSV").onclick = async () => {
+  const res = await fetch(SCRIPT_URL);
+  const data = await res.json();
+  let csv = "Nombre,Email,Codigo,Entrada,Cantidad,Estado\n";
+  data.forEach(v=>{
+    csv += `${v.nombre},${v.email},${v.entrada},${v.cantidad},${v.estado}\n`;
+  });
+  const blob = new Blob([csv],{type:"text/csv"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "ventas.csv";
+  a.click();
+};
+
+// ================= REFRESH =================
+document.getElementById("btnRefresh").onclick = cargarDatos;
+</script>
+
+</body>
+</html>
