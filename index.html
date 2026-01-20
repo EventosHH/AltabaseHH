@@ -85,6 +85,7 @@ nav a.active{
   padding-bottom:4px;
 }
 
+/* barra roja desactivada correctamente */
 .barra-activa{
   display:none;
 }
@@ -247,6 +248,11 @@ h2{
 /* ================= RESPONSIVE SOLO MOBILE ================= */
 @media(max-width:768px){
 
+  /* 🔧 FIX HEADER (este era el error real) */
+  header{
+    border-bottom:none;
+  }
+
   section{
     padding:48px 12px;
   }
@@ -274,10 +280,23 @@ h2{
     grid-template-columns:1fr;
   }
 
+  /* 🔧 FIX SPONSORS */
   .sponsors-grid{
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
   }
 
+  .sponsor-box{
+    width:100%;
+    height:120px;
+  }
+}
+
+/* ================= TABLET ================= */
+@media(max-width:900px){
+  .sponsors-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
 }
 </style>
 </head>
