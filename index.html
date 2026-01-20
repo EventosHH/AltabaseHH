@@ -208,16 +208,10 @@ h2{
    FIX DEFINITIVO MOBILE – HEADER + ANCHO REAL
    ===================================================== */
 
-html{
+html, body{
   width:100%;
   max-width:100%;
   overflow-x:hidden;
-}
-
-body{
-  width:100%;
-  max-width:100%;
-  overflow-x:visible;
 }
 
 /* ---------- HEADER DESLIZABLE SOLO MOBILE ---------- */
@@ -307,31 +301,6 @@ body{
   .sponsor-box img{
     max-width:90%;
     max-height:80%;
-  }
-}
-  @media (max-width:768px){
-
-  nav{
-    overflow-x:auto;
-    overflow-y:hidden;
-    touch-action: pan-x;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  nav ul{
-    display:flex;
-    flex-wrap:nowrap;
-    width:max-content;
-    min-width:100%;
-  }
-
-  nav li{
-    flex:0 0 auto;
-  }
-}
-@media (max-width:768px){
-  header{
-    overflow:visible;
   }
 }
 </style>
@@ -549,6 +518,7 @@ body{
 <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
