@@ -514,6 +514,58 @@ footer{
 .barra-activa{
   display: none;
 }
+  /* =====================================================
+   CORRECCIÓN DE ANCHO REAL (MOBILE FIX DEFINITIVO)
+   ===================================================== */
+
+/* Nunca permitir que algo se salga del viewport */
+html, body{
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Todo el contenido principal respeta el ancho */
+header,
+section,
+footer{
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Contenedores centrados reales */
+.header-container,
+.lineup-battles,
+.tickets,
+.sponsors-grid,
+.footer-container,
+.comprar-container{
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Mobile: evitar “lienzo gigante” */
+@media (max-width: 768px){
+
+  .header-container,
+  .lineup-battles,
+  .tickets,
+  .sponsors-grid,
+  .footer-container,
+  .comprar-container{
+    max-width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* battle-box no puede forzar ancho */
+  .battle-box{
+    width: 100%;
+    max-width: 100%;
+  }
+}
 </style>
 </head>
 <body>
@@ -729,3 +781,4 @@ footer{
 <script src="script.js"></script>
 </body>
 </html>
+
