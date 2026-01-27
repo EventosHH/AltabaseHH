@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const CODIGOS_ESQUINAS = [
     "CLANDEWU90HH","CABRASENCARRERA90HH","MATUZA90HH","METRYK90HH",
-    "OWEN90HH","CARPINTERO90HH","DAVID90HH","COVA90HH"
+    "OWEN90HH","CARPINTERO90HH","DAVID90HH","COVA90HH", "DESCUENTO90HH"
   ];
 
   /* ================= FUNCIONES STOCK ================= */
@@ -276,5 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
   actualizarBarraActiva();
 
 });
+
 
 
